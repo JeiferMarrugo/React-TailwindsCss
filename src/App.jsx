@@ -1,38 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "./components/Header";
 import TodoComputed from "./components/TodoComputed";
 import TodoCreate from "./components/TodoCreate";
 import TodoFilter from "./components/TodoFilter";
 import TodoList from "./components/TodoList";
 
-const InitialStateTodos = [
-    {
-        id: 1,
-        title: "Tarea 1",
-        completed: true,
-    },
-
-    {
-        id: 2,
-        title: "Tarea 2",
-        completed: false,
-    },
-
-    {
-        id: 3,
-        title: "Tarea 3",
-        completed: true,
-    },
-
-    {
-        id: 4,
-        title: "Tarea 4",
-        completed: false,
-    },
-];
+const InitialStateTodos = JSON.parse(localStorage.getItem("todos")) || [];
 
 const App = () => {
     const [todos, setTodos] = useState(InitialStateTodos);
+
+    useEffect(() => {
+        localStorage.setItem("todos", JSON.stringify(todos));
+    }, [todos]);
 
     const createTodo = (title) => {
         const newTodo = {
@@ -79,9 +59,21 @@ const App = () => {
     };
 
     return (
-        <div className="bg-no-repeat bg-container bg-gray-300 min-h-screen bg-[url('src/assets/images/bg-mobile-light.jpg')] dark:bg-gray-900 dark:bg-[url('src/assets/images/bg-mobile-dark.jpg')] transition-all duration-500">
+        <div
+            className="min-h-screen 
+            bg-gray-300 
+            bg-[url('src/assets/images/bg-mobile-light.jpg')] 
+            bg-contain 
+            bg-no-repeat  
+            transition-all 
+            duration-500 
+          dark:bg-gray-900 
+            dark:bg-[url('src/assets/images/bg-mobile-dark.jpg')] 
+            md:bg-[url('src/assets/images/bg-desktop-light.jpg')] 
+            md:dark:bg-[url('src/assets/images/bg-desktop-dark.jpg')]"
+        >
             <Header />
-            <main className="container mx-auto mt-6 px-4">
+            <main className="container mx-auto mt-6 px-4 md:max-w-xl">
                 <TodoCreate createTodo={createTodo} />
 
                 <TodoList
