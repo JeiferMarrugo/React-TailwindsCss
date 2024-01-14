@@ -1,5 +1,5 @@
-import CrossIcon from "./icons/CrossIcon";
-import CheckIcon from "./icons/CheckIcon";
+import CrossIcon from "./Icons/CrossIcon";
+import CheckIcon from "./Icons/CheckIcon";
 import React from "react";
 
 const TodoItem = React.forwardRef(
