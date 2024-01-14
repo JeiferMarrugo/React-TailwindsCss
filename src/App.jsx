@@ -1,5 +1,3 @@
-import { DragDropContext } from "@hello-pangea/dnd";
-
 import { useEffect, useState } from "react";
 import Header from "./components/Header";
 import TodoComputed from "./components/TodoComputed";
@@ -7,64 +5,22 @@ import TodoCreate from "./components/TodoCreate";
 import TodoFilter from "./components/TodoFilter";
 import TodoList from "./components/TodoList";
 
-const InitialStateTodos = JSON.parse(localStorage.getItem("todos")) || [];
+const initialStateTodos = JSON.parse(localStorage.getItem("todos")) || [];
 
 const reorder = (list, startIndex, endIndex) => {
     const result = [...list];
     const [removed] = result.splice(startIndex, 1);
     result.splice(endIndex, 0, removed);
+
+    return result;
 };
 
 const App = () => {
-    const [todos, setTodos] = useState(InitialStateTodos);
+    const [todos, setTodos] = useState(initialStateTodos);
 
     useEffect(() => {
         localStorage.setItem("todos", JSON.stringify(todos));
     }, [todos]);
-
-    const createTodo = (title) => {
-        const newTodo = {
-            id: Date.now(),
-            title: title.trim(),
-            completed: false,
-        };
-        setTodos([...todos, newTodo]);
-    };
-
-    const removeTodo = (id) => {
-        setTodos(todos.filter((todo) => todo.id !== id));
-    };
-
-    const updateTodo = (id) => {
-        setTodos(
-            todos.map((todo) =>
-                todo.id === id ? { ...todo, completed: !todo.completed } : todo
-            )
-        );
-    };
-
-    const countTodo = todos.filter((todo) => !todo.completed).length;
-
-    const clearCompleted = () => {
-        setTodos(todos.filter((todo) => !todo.completed));
-    };
-
-    const [filter, setFilter] = useState("All");
-
-    const changeFilter = (filter) => setFilter(filter);
-
-    const filterTodos = () => {
-        switch (filter) {
-            case "All":
-                return todos;
-            case "Active":
-                return todos.filter((todo) => !todo.completed);
-            case "Completed":
-                return todos.filter((todo) => todo.completed);
-            default:
-                return todos;
-        }
-    };
 
     const handleDragEnd = (result) => {
         const { destination, source } = result;
@@ -80,42 +36,79 @@ const App = () => {
         );
     };
 
+    const createTodo = (title) => {
+        const newTodo = {
+            id: `${Date.now()}`,
+            title: title.trim(),
+            completed: false,
+        };
+
+        setTodos([...todos, newTodo]);
+    };
+
+    const removeTodo = (id) => {
+        setTodos(todos.filter((todo) => todo.id !== id));
+    };
+
+    const updateTodo = (id) => {
+        setTodos(
+            todos.map((todo) =>
+                todo.id === id ? { ...todo, completed: !todo.completed } : todo
+            )
+        );
+    };
+
+    const computedItemsLeft = todos.filter((todo) => !todo.completed).length;
+
+    const clearCompleted = () => {
+        setTodos(todos.filter((todo) => !todo.completed));
+    };
+
+    const [filter, setFilter] = useState("all");
+
+    const changeFilter = (filter) => setFilter(filter);
+
+    const filteredTodos = () => {
+        switch (filter) {
+            case "All":
+                return todos;
+            case "Active":
+                return todos.filter((todo) => !todo.completed);
+            case "Completed":
+                return todos.filter((todo) => todo.completed);
+            default:
+                return todos;
+        }
+    };
+
     return (
-        <div
-            className="min-h-screen 
-            bg-gray-300 
-            bg-[url('src/assets/images/bg-mobile-light.jpg')] 
-            bg-contain 
-            bg-no-repeat  
-            transition-all 
-            duration-500 
-          dark:bg-gray-900 
-            dark:bg-[url('src/assets/images/bg-mobile-dark.jpg')] 
-            md:bg-[url('src/assets/images/bg-desktop-light.jpg')] 
-            md:dark:bg-[url('src/assets/images/bg-desktop-dark.jpg')]"
-        >
+        <div className="min-h-screen bg-gray-300 bg-mobile-light bg-contain bg-no-repeat transition-all duration-1000 dark:bg-gray-900 dark:bg-mobile-dark md:bg-desktop-light md:dark:bg-desktop-dark">
             <Header />
-            <main className="container mx-auto mt-6 px-4 md:max-w-xl">
+
+            <main className="container mx-auto mt-8 px-4 md:max-w-xl">
                 <TodoCreate createTodo={createTodo} />
 
-                <DragDropContext onDragEnd={handleDragEnd}>
+                {todos.length > 0 ? (
                     <TodoList
-                        todos={filterTodos()}
+                        todos={filteredTodos()}
                         removeTodo={removeTodo}
                         updateTodo={updateTodo}
+                        handleDragEnd={handleDragEnd}
                     />
-                </DragDropContext>
+                ) : (
+                    <p>Cargando...</p>
+                )}
 
                 <TodoComputed
-                    countTodo={countTodo}
+                    computedItemsLeft={computedItemsLeft}
                     clearCompleted={clearCompleted}
                 />
 
                 <TodoFilter changeFilter={changeFilter} filter={filter} />
             </main>
 
-            <footer className="mt-8 text-center dark:text-gray-300 transition-all duration-500">
-                Ultimo texto
+            <footer className="mt-8 text-center dark:text-gray-400">
+                Drag and drop to reorder list
             </footer>
         </div>
     );

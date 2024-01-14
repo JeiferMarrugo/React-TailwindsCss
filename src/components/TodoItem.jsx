@@ -1,5 +1,5 @@
-import CrossIcon from "./Icons/CrossIcon";
-import CheckIcon from "./Icons/CheckIcon";
+import CrossIcon from "./icons/CrossIcon";
+import CheckIcon from "./icons/CheckIcon";
 import React from "react";
 
 const TodoItem = React.forwardRef(
@@ -8,23 +8,24 @@ const TodoItem = React.forwardRef(
 
         return (
             <article
-                {...props}
+                className="flex gap-4 border-b border-b-gray-400 "
                 ref={ref}
-                className="flex gap-4 py-3 border-b border-b-gray-400 transition-all duration-500"
+                {...props}
             >
                 <button
                     className={`h-5 w-5 flex-none rounded-full border-2 ${
                         completed
-                            ? "bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% grid place-items-center"
-                            : "inline-block "
+                            ? "grid place-items-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"
+                            : "inline-block"
                     }`}
                     onClick={() => updateTodo(id)}
                 >
                     {completed && <CheckIcon />}
                 </button>
-
                 <p
-                    className={`text-gray-600 dark:text-gray-300 grow ${completed && "line-through"}`}
+                    className={`grow text-gray-600 transition-all duration-1000 dark:text-gray-400 ${
+                        completed && "line-through"
+                    }`}
                 >
                     {title}
                 </p>
