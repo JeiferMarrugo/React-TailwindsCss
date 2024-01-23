@@ -1,14 +1,18 @@
 import { useState } from "react";
 
 const TodoCreate = ({ createTodo }) => {
-    const [title, setTitle] = useState([]);
+    const [title, setTitle] = useState("");
 
     const handleSubmitAddTodo = (e) => {
         e.preventDefault();
 
-        if (!title.trim()) {
+        const regex = /^[a-zA-Z0-9\s]+$/;
+
+        if (!title.trim() || !regex.test(title)) {
+
             return setTitle("");
         }
+
         createTodo(title);
         setTitle("");
     };
